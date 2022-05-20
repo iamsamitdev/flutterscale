@@ -1,5 +1,6 @@
+// ignore_for_file: unnecessary_null_comparison, library_prefixes
+
 import 'dart:convert';
-import 'dart:ffi';
 
 import 'package:flutterscale/models/NewsModel.dart';
 import 'package:http/http.dart' as http;

@@ -1,6 +1,7 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:flutterscale/models/NewsModel.dart';
-import 'package:flutterscale/utils/constants.dart' as Constant;
 import 'package:flutterscale/services/rest_api.dart';
 
 class NewsScreen extends StatefulWidget {
@@ -45,7 +46,8 @@ class _NewsScreenState extends State<NewsScreen> {
                       return const Center(
                         child: Text('มีข้อผิดพลาดในการโหลดข้อมูล'),
                       );
-                    }else if (snapshot.connectionState == ConnectionState.done) {
+                    } else if (snapshot.connectionState ==
+                        ConnectionState.done) {
                       // ถ้าโหลดข้อมูลสำเร็จ
                       List<NewsModel> news = snapshot.data;
                       return _listViewAllNews(news);
@@ -55,9 +57,7 @@ class _NewsScreenState extends State<NewsScreen> {
                         child: CircularProgressIndicator(),
                       );
                     }
-                  }
-            )
-          ),
+                  })),
         ],
       ),
     );
