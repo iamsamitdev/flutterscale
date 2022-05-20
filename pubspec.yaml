@@ -39,6 +39,8 @@ dependencies:
   introduction_screen: ^3.0.2
   # สำหรับเก็บข้อมูล local storage บน android/ios
   shared_preferences: ^2.0.15
+  # Http
+  http: ^0.13.4
 
 dev_dependencies:
   flutter_test:

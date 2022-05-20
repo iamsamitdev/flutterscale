@@ -14,7 +14,7 @@ void main() async {
   userStep = sharedPreferences.getInt('userStep');
 
   if(userStep == 1){
-    initURL = '/home';
+    initURL = '/dashboard';
   }else{
     initURL = '/welcome';
   }
