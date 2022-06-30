@@ -103,39 +103,49 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ]
       ),
       drawer: SizedBox(
-        width: 300,
+        width: 250,
         child: Drawer(
           backgroundColor: Colors.teal,
           child: ListView(
             children: [
               SizedBox(
-                height: 70.0,
+                height: 150.0,
                 child: DecoratedBox(
                   decoration: const BoxDecoration(color: Colors.blue),
                   child: Padding(
                     padding: const EdgeInsets.only(left: 16.0),
-                    child: Row(
-                      children: [
-                        imgprofile != null ? CircleAvatar(
-                          backgroundImage: NetworkImage('https://www.itgenius.co.th/sandbox_api/mrta_flutter_api/public/images/profile/'+imgprofile!),
-                        ): const CircularProgressIndicator(),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 10, top: 5),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              fullname ?? '...', 
-                              style: const TextStyle(color: Colors.white, fontSize: 20)
-                            ),
-                            Text(
-                              username ?? '...', 
-                              style: const TextStyle(color: Colors.white)
-                            )
-                          ],
-                        ),
-                      )
-                      ],
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 10, bottom: 30),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          imgprofile != null ? CircleAvatar(
+                            backgroundImage: NetworkImage('https://www.itgenius.co.th/sandbox_api/mrta_flutter_api/public/images/profile/'+imgprofile!),
+                          ): const CircularProgressIndicator(),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 20),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                width: 150,
+                                child: Text(
+                                  fullname ?? '...', 
+                                  style: const TextStyle(color: Colors.white, fontSize: 16),
+                                  overflow: TextOverflow.clip,
+                                  maxLines: 1,
+                                ),
+                              ),
+                              Text(
+                                username ?? '...', 
+                                style: const TextStyle(color: Colors.white)
+                              )
+                            ],
+                          ),
+                        )
+                        ],
+                      ),
                     ),
                   ),
                 ),

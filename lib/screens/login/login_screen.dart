@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutterscale/components/widgets.dart';
 import 'package:flutterscale/services/rest_api.dart';
-import 'package:flutterscale/themes/colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -17,6 +17,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   // สร้างตัวแปรไว้รับค่าจากฟอร์ม
   late String _username, _password;
+  bool hidePassword = true;
+  bool isAPICallProcess = false;
 
   @override
   Widget build(BuildContext context) {
@@ -31,144 +33,143 @@ class _LoginScreenState extends State<LoginScreen> {
             child: SizedBox(
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
-              child: Form(
-                  key: formKey,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      TextFormField(
-                        autofocus: false,
-                        keyboardType: TextInputType.text,
-                        style: const TextStyle(
-                            fontSize: 20, color: inputTextColor),
-                        decoration: const InputDecoration(
-                            labelText: 'Username',
-                            hintText: 'ป้อนชื่อผู้ใช้',
-                            hintStyle:
-                                TextStyle(fontSize: 16, color: inputTextColor),
-                            icon: Icon(
-                              Icons.person,
-                              size: 24,
-                            )),
-                        validator: (value) {
-                          if (value!.isEmpty) {
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 40),
+                child: Form(
+                    key: formKey,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.2,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const [
+                              CircleAvatar(
+                                radius: 30.0,
+                                backgroundImage:
+                                    AssetImage('assets/images/logobigc.png'),
+                              )
+                            ],
+                          ),
+                        ),
+                        inputFieldWidget(
+                            context,
+                            const Icon(Icons.person),
+                            "username",
+                            "ชื่อผู้ใช้",
+                            "ป้อนชื่อผู้ใช้", (onValidateVal) {
+                          if (onValidateVal.isEmpty) {
                             return 'กรุณาป้อนชื่อผู้ใช้ก่อน';
-                          } else {
-                            return null;
                           }
-                        },
-                        onSaved: (value) {
-                          _username = value.toString().trim();
-                        },
+                          return null;
+                        }, (onSavedVal) {
+                          _username = onSavedVal;
+                        }, keyboardType: TextInputType.text,
                       ),
-                      TextFormField(
-                        autofocus: false,
-                        obscureText: true,
-                        keyboardType: TextInputType.text,
-                        style: const TextStyle(
-                            fontSize: 20, color: inputTextColor),
-                        decoration: const InputDecoration(
-                            labelText: 'Password',
-                            hintText: 'ป้อนรหัสผ่าน',
-                            hintStyle:
-                                TextStyle(fontSize: 16, color: inputTextColor),
-                            icon: Icon(
-                              Icons.lock,
-                              size: 24,
-                            )),
-                        validator: (value) {
-                          if (value!.isEmpty) {
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        inputFieldWidget(
+                            context,
+                            const Icon(Icons.lock),
+                            "password",
+                            "รหัสผ่าน",
+                            "ป้อนรหัสผ่าน", (onValidateVal) {
+                          if (onValidateVal.isEmpty) {
                             return 'กรุณาป้อนรหัสผ่านก่อน';
-                          } else if (value.length < 4) {
+                          } else if (onValidateVal.length < 4) {
                             return 'รหัสผ่านต้องไม่น้อยกว่า 4 ตัวอักษร';
-                          } else {
-                            return null;
                           }
+                          return null;
+                        }, (onSavedVal) {
+                          _password = onSavedVal;
                         },
-                        onSaved: (value) {
-                          _password = value.toString().trim();
-                        },
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      SizedBox(
-                        width: 280,
-                        child: ElevatedButton(
-                            onPressed: () async {
-                              if (formKey.currentState!.validate()) {
-                                formKey.currentState!.save();
+                            obscureText: hidePassword,
+                            suffixIcon: IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  hidePassword = !hidePassword;
+                                });
+                              },
+                              color: Colors.redAccent.withOpacity(0.9),
+                              icon: Icon(hidePassword
+                                  ? Icons.visibility_off
+                                  : Icons.visibility),
+                            ),
+                            keyboardType: TextInputType.text),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        submitButton("เข้าสู่ระบบ", () async {
+                          if (formKey.currentState!.validate()) {
+                            formKey.currentState!.save();
 
-                                // print(_username);
-                                // print(_password);
+                            // print(_username);
+                            // print(_password);
 
-                                // เรียกใช้ LoginAPI
-                                var response = await CallAPI().loginAPI(
-                                  {
-                                    "username": _username,
-                                    "password": _password
-                                  }
-                                );
+                            // เรียกใช้ LoginAPI
+                            var response = await CallAPI().loginAPI(
+                                {"username": _username, "password": _password});
 
-                                var body = json.decode(response.body);
+                            var body = json.decode(response.body);
 
-                                if (body['status'] == 'success' && 
-                                    body['data']['status'] == '1') {
-                                  // สร้าง Object แบบ SharedPreferences
-                                  SharedPreferences sharedPreferences =
-                                      await SharedPreferences.getInstance();
+                            if (body['status'] == 'success' &&
+                                body['data']['status'] == '1') {
+                              // สร้าง Object แบบ SharedPreferences
+                              SharedPreferences sharedPreferences =
+                                  await SharedPreferences.getInstance();
 
-                                  // เก็บค่าที่ต้องการลงในตัวแปรแบบ SharedPreferences
-                                  sharedPreferences.setInt('userStep', 1);
-                                  sharedPreferences.setString(
-                                    'userName', _username
-                                  );
-                                  sharedPreferences.setString(
-                                    'fullName', body['data']['fullname']
-                                  );
-                                  sharedPreferences.setString(
-                                    'imgProfile', body['data']['img_profile']
-                                  );
+                              // เก็บค่าที่ต้องการลงในตัวแปรแบบ SharedPreferences
+                              sharedPreferences.setInt('userStep', 1);
+                              sharedPreferences.setString(
+                                  'userName', _username);
+                              sharedPreferences.setString(
+                                  'fullName', body['data']['fullname']);
+                              sharedPreferences.setString(
+                                  'imgProfile', body['data']['img_profile']);
 
-                                  // ส่งไปหน้า HomeScreen
-                                  Navigator.of(context).pushReplacementNamed('/dashboard');
-                                 } else {
-                                  AlertDialog alert = AlertDialog(
-                                    title: const Text('มีข้อผิดพลาด'),
-                                    content:
-                                        const Text('ข้อมูลเข้าระบบไม่ถูกต้อง'),
-                                    actions: [
-                                      ElevatedButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: const Text('OK'))
-                                    ],
-                                  );
+                              // ส่งไปหน้า HomeScreen
+                              Navigator.of(context)
+                                  .pushReplacementNamed('/dashboard');
+                            } else {
+                              AlertDialog alert = AlertDialog(
+                                title: const Text('มีข้อผิดพลาด'),
+                                content: const Text('ข้อมูลเข้าระบบไม่ถูกต้อง'),
+                                actions: [
+                                  ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: const Text('OK'))
+                                ],
+                              );
 
-                                  showDialog(
-                                      barrierDismissible: false,
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return alert;
-                                      });
-                                }
-                              }
+                              showDialog(
+                                  barrierDismissible: false,
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return alert;
+                                  });
+                            }
+                          }
+                        }),
+                        const SizedBox(
+                          height: 40,
+                        ),
+                        const Text('ยังไม่เป็นสมาชิก ?',
+                            style: TextStyle(fontSize: 16)),
+                        TextButton(
+                            onPressed: () {
+                              Navigator.of(context)
+                                  .pushReplacementNamed('/register');
                             },
-                            child: const Text('เข้าสู่ระบบ')),
-                      ),
-                      const SizedBox(
-                        height: 40,
-                      ),
-                      const Text('ยังไม่เป็นสมาชิก ?'),
-                      TextButton(
-                          onPressed: () {
-                            Navigator.of(context)
-                                .pushReplacementNamed('/register');
-                          },
-                          child: const Text('ลงทะเบียน'))
-                    ],
-                  )),
+                            child: const Text('ลงทะเบียนที่นี่',
+                                style: TextStyle(fontSize: 16)))
+                      ],
+                    )),
+              ),
             ),
           ),
         ),

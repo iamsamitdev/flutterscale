@@ -4,17 +4,26 @@ import 'package:flutterscale/themes/colors.dart';
 ThemeData appTheme() {
   return ThemeData(
     fontFamily: 'NotoSansThai',
-    colorScheme: ColorScheme.fromSwatch(
-      primarySwatch: Colors.orange,
-      accentColor: primaryColor
-    ),
+    primaryColor: primaryColor,
+    errorColor: Colors.red,
+    hoverColor: Colors.grey,
+    colorScheme: const ColorScheme.light(primary: primaryColor),
+    cardTheme: const CardTheme(color: Colors.white),
+    iconTheme: const IconThemeData(color: textColorPrimary),
     textTheme: const TextTheme(
-      bodyText1: TextStyle(color: primaryTextColor)
+      button: TextStyle(color: primaryColor),
+      headline6: TextStyle(color: textColorPrimary),
+      bodyText1: TextStyle(color: white_color),
+      subtitle2: TextStyle(color: textColorSecondary),
     ),
-    scaffoldBackgroundColor: primaryTextColor,
+    textSelectionTheme: const TextSelectionThemeData(cursorColor: Colors.white),
+    scaffoldBackgroundColor: white_color,
     appBarTheme: const AppBarTheme(
       backgroundColor: primaryColor,
-      foregroundColor: primaryTextColor
+      foregroundColor: white_color,
+      iconTheme: IconThemeData(color: white_color)
     )
+
+    
   );
 }

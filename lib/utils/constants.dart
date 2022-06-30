@@ -1,4 +1,6 @@
 // API Constant
+// ignore_for_file: constant_identifier_names
+
 const String baseAPIURL = 'https://www.itgenius.co.th/sandbox_api/mrta_flutter_api/public/api/';
 
 // System App Name
